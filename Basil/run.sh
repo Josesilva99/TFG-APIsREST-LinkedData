@@ -1,0 +1,1 @@
+java -jar -Dbasil.configurationFile=./tmp/basil-0.8.0/basil.ini -Dlog4j.configurationFile=/tmp/basil-0.8.0/server/src/test/resources/log4j2.xml  /tmp/basil-0.8.0/server/target/basil-server-0.8.0.jar -p 8080

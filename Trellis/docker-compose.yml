@@ -1,0 +1,26 @@
+version: "3"
+services:
+  trellis:
+    image: trellisldp/trellis-postgresql:latest
+    environment:
+      MP_JWT_VERIFY_PUBLICKEY_LOCATION: "https://idp.example.com/jwks"
+      QUARKUS_DATASOURCE_USERNAME: trellis
+      QUARKUS_DATASOURCE_PASSWORD: trellis
+      QUARKUS_DATASOURCE_JDBC_URL: jdbc:postgresql://db/trellis
+      TRELLIS_FILE_BINARY_PATH: /opt/trellis/data/binary
+      TRELLIS_FILE_MEMENTO_PATH: /opt/trellis/data/memento
+    ports:
+      - 80:8080
+    depends_on:
+      - db
+    volumes:
+      - /local/trellis/data:/opt/trellis/data
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: trellis
+      POSTGRES_PASSWORD: trellis
+      POSTGRES_USER: trellis
+      PGDATA: /var/lib/postgresql/data/pgdata/mydata
+    volumes:
+      - /local/postgresql/data/folder:/var/lib/postgresql/data/pgdata/mydata

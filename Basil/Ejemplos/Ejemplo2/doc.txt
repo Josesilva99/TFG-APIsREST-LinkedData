@@ -1,0 +1,1 @@
+El objetivo es crear una API que permita tener parámetros en la URI para realizar las consultas y tener una breve documentación.
