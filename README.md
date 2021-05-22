@@ -13,7 +13,7 @@ Geramos la imagén de la aplicación:
 ```
 docker build -t pubby .
 ```
-_ Lanzamos el contenedor de forma iterativa a traves del puerto 8080 y permitiendo sincronizar el fichero indicado de nuestro host dentro de la imagen:_
+Lanzamos el contenedor de forma iterativa a traves del puerto 8080 y permitiendo sincronizar el fichero indicado de nuestro host dentro de la imagen:
 
 ```
 docker run -it -p 8080:8080 -v "$(pwd)/Configuracion:/usr/tmp" pubby
