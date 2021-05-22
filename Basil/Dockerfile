@@ -8,7 +8,7 @@ COPY ./Ejemplos/Ejemplo1/user1.json .
 
 #-Ejemplo 2-
 COPY ./Ejemplos/Ejemplo2/query2.sparql .
-COPY ./Ejemplos/Ejemplo2/user2.json .
+COPY ./Ejemplos/Ejemplo2/alias2.txt .
 #----------------------------------
 COPY script.sh .
 COPY basil.ini .
