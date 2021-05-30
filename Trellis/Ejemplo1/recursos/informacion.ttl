@@ -1,0 +1,11 @@
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<> a foaf:PersonalProfileDocument;
+    foaf:primaryTopic <#me> ;
+    dc:title 'Informacion Pablo' .
+
+<#me> a foaf:Person;
+    foaf:name 'Pablo';
+    foaf:lastName 'Sanchez';
+    foaf:interest 'Le apasiona la ingeniería y el futbol'  .

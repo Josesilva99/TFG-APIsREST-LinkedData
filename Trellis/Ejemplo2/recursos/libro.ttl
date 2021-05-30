@@ -1,0 +1,9 @@
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix bo: <http://example/books/#> .
+
+<> a bo:Book;
+    bo:primaryTopic <#info> ;
+    bo:title 'Señor de los anillos' .
+
+<#info> a bo:Book;
+    bo:description 'Narra las aventuras de unos Hobbits para destruir un anillo'.

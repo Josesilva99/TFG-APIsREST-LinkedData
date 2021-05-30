@@ -1,0 +1,6 @@
+PREFIX ldp: <http://www.w3.org/ns/ldp#>
+PREFIX dc: <http://purl.org/dc/terms/>
+
+<> a ldp:BasicContainer ;
+   dc:title "Contenedor Pablo" .
+

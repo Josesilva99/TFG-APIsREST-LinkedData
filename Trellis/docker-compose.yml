@@ -10,7 +10,7 @@ services:
       TRELLIS_FILE_BINARY_PATH: /opt/trellis/data/binary
       TRELLIS_FILE_MEMENTO_PATH: /opt/trellis/data/memento
     ports:
-      - 80:8080
+      - 8080:8080
     depends_on:
       - db
     volumes:
@@ -24,3 +24,8 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata/mydata
     volumes:
       - /local/postgresql/data/folder:/var/lib/postgresql/data/pgdata/mydata
+
+
+
+
+

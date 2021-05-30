@@ -1,0 +1,7 @@
+PREFIX ldp: <http://www.w3.org/ns/ldp#>
+PREFIX dc: <http://purl.org/dc/terms/>
+PREFIX p: <http://purl.org/saws/ontology#>
+<> a ldp:DirectContainer ;
+   dc:title "Contenedor Publicacion" ;
+   ldp:membershipResource </editorial/escritores> ;
+   ldp:hasMemberRelation p:hasWrite .
