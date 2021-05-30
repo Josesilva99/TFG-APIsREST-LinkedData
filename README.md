@@ -2,10 +2,18 @@
 Este repositorio contiene los avances que se realicen de la asignatura TFG de la UPM en Grado en Ingeniería Informática. Se incluye la memoria de desarrollo y los ficheros necesarios para lanzar las aplicaciones. Para probar las aplicaciones es necesario tener la carpeta descargada de la aplicación que se desea probar. Una vez que se tenga instalado Docker, hay que estar situados en el directorio de la carpeta descargada para poder seguir las instrucciones de lanzamiento y prueba de ejemplos.
 
 ## Docker
-Para obtener Docker debemos de acceder a la página oficial de [Docker](https://docs.docker.com/get-docker/ ) y seguir los pasos de instalación según el sistema operativo que tengamos. Para el desarrollo práctico y prueba de herramientas se ha utilizado Docker para Windows 10 Pro. 
+Herramienta software que nos permite crear, probar e implementar aplicaciones asegurandonos, sea cual sea el entorno donde se requiera usar la aplicación, que siempre funcionará. Esto es posible ya que Docker se basa en contenedores que poseen todo lo necesario (nucleo sistema operativo, código, librerías…). Para obtener Docker debemos de acceder a la página oficial de [Docker](https://docs.docker.com/get-docker/ ) y seguir los pasos de instalación según el sistema operativo que tengamos. Para el desarrollo práctico y prueba de herramientas se ha utilizado Docker para Windows 10 Pro. 
 
 Tendremos que crearnos una cuenta en [Docker Hub](https://hub.docker.com/) para acceder al repositorio de imágenes, que se suelen usar como base para los dockerfile, necesario para lanzar nuestras aplicaciones. 
 
+## Curl
+Herramienta de línea de comandos que permite realizar solicitudes HTTP. Permite probar las APIs  sin la necesidad de tener una aplicación web montada.
+### Instalación
+Se ha utilizado el terminal de Git Bash durante el desarrollo del proyecto para realizar las interacciones con las APIs. Se puede utilizar otros terminales instalando los correspondientes paquetes de Curl. Para instalar Git Bash: 
+1.	Visitar la página : https://git-scm.com/downloads
+2.	Elegir el sistema en la lista e instalar la configuración descargada
+3.	Registrar la ruta del directorio instalable en las variables de entorno.
+4.	Abrir Git bash
 
 ## PUBBY
 ### Lanzar aplicación
@@ -113,7 +121,7 @@ Una vez arrancado nuestra base de datos, ejecutamos el script "run.sh" en segund
 ```
 ./run.sh &
 ```
-Debemos de obtener el control de la consola con “ctrl+c”. Podemos comprobar con el comando “ps -u” que nuestro proceso sigue funcionando. Con esto ya tendríamos la aplicación Basil en funcionamiento y lista para usar. Para crear y gestionar nuestras APIs se deberá de realizar a través del comando “curl”
+Debemos de obtener el control de la consola con “ctrl+c”. Podemos comprobar con el comando “ps -u” que nuestro proceso sigue funcionando. Con esto ya tendríamos la aplicación Basil en funcionamiento y lista para usar. Para crear y gestionar nuestras APIs se deberá de realizar a través del comando “curl”. La aplicación se ejecuta en http://localhost:8080/
 
 ### Probar ejemplos
 Una vez lanzada la aplicación podemos probar los siguientes ejemplos lanzando los comandos ,desde el terminal Shell Bash en la ruta raíz, en el orden correspondiente.  
@@ -218,11 +226,130 @@ curl http://localhost:8080/basil/peliculas-filtro/docs
 ```
 curl http://localhost:8080/basil/peliculas-filtro/api?limitador=2
 ```
+## Puelia
+Lamentablemente esta herramienta no ha podido ser probada con éxito por errores php que aparecen en la salida de la interfaz. Para más información consultar la memoria del proyecto. Se ha subido las aplicaciones y ficheros de configuración que se ha utilizado en la prueba.
 
 ## TRELLIS
 ### Lanzar aplicación
-
+Generamos los contenedores con dockercompose
+```
+docker-compose up
+```
+Tendremos la API en funcionamiento. Para crear y gestionar nuestras APIs se deberá de realizar a través del comando “curl”. La aplicación se ejecuta en http://localhost:8080/
 
 ### Probar ejemplos
 
+#### 1. Creación de recursos LDP-RS y LDP-NRS en un contendor básico.
+El objetivo es almacenar recursos del usuario Raul. En este caso el usuario tiene información sobre su persona y una foto de perfil. Es necesario utilizar para cumplir estos campos un recurso RDF y una imagen (no RDF) respectivamente.
 
+##### 1. Creación contenedor básico para el usuario Pablo
+```
+curl -s http://localhost:8080 -XPOST -H"Slug: pablo" -H"Link: <http://www.w3.org/ns/ldp#BasicContainer>; rel=\"type\"" -H"Content-Type: text/turtle" --data-binary @recursos/pablo.ttl
+
+```
+Contenido del fichero raul.ttl:
+```
+PREFIX ldp: <http://www.w3.org/ns/ldp#>
+PREFIX dc: <http://purl.org/dc/terms/>
+<> a ldp:BasicContainer ;
+   dc:title "Contenedor Pablo" .
+
+```
+##### 2. Creación recurso  RDF con la información del usuario:
+```
+curl -s http://localhost:8080/pablo/ -XPOST -H"Slug: informacion" -H"Link: <http://www.w3.org/ns/ldp#Resource>; rel=\"type\"" -H"Content-Type: text/turtle" --data-binary @recursos/informacion.ttl
+
+```
+Contenido del fichero informacion.ttl:
+```
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<> a foaf:PersonalProfileDocument;
+    foaf:primaryTopic <#me> ;
+    dc:title 'Informacion Pablo' .
+
+<#me> a foaf:Person;
+    foaf:name 'Pablo';
+    foaf:lastName 'Sanchez';
+    foaf:interest 'Le apasiona la ingeniería y el futbol'  .
+
+
+```
+
+##### 3. Creación un recurso no RDF, de tipo imagen, para el avatar del usuario:
+```
+curl -s http://localhost:8080/pablo/ -XPOST -H"Slug: avatar" -H"Link: <http://www.w3.org/ns/ldp#Resource>; rel=\"type\"" -H"Content-Type: image/jpg" --data-binary @recursos/avatar.jpg
+
+```
+##### 4. Resultados:
+Realizando una petición Get a  /pablo/ se puede observar que se ha agregado enlaces a los recursos creados con “ldp:contains”: 
+
+
+#### 2. Uso de contenedores básicos y directos
+El objetivo es almacenar recursos de una editorial. Esta editorial almacena publicaciones que contienen RDF libro. Además, usando la propiedad de contendor directo, se indica la creación de tripletas con los atributos membershipResource y hasMemberRelation en el recurso /editorial/escritores
+
+##### 1. Creación contenedor básico para la editorial:
+```
+curl -s http://localhost:8080 -XPOST -H"Slug: edits" -H"Link: <http://www.w3.org/ns/ldp#BasicContainer>; rel=\"type\"" -H"Content-Type: text/turtle" --data-binary @recursos/editorial.ttl
+
+```
+Contenido del fichero editorial.ttl:
+```
+PREFIX ldp: <http://www.w3.org/ns/ldp#>
+PREFIX dc: <http://purl.org/dc/terms/>
+
+<> a ldp:BasicContainer ;
+   dc:title "Contenedor Editorial" .
+```
+
+
+##### 2. Creación contenedor directo de una publicación de la editorial:
+```
+curl -s http://localhost:8080/editorial -XPOST -H"Slug: publicacion1" -H"Link: <http://www.w3.org/ns/ldp#DirectContainer>; rel=\"type\"" -H"Content-Type: text/turtle" --data-binary @recursos/publicacion.ttl
+
+```
+Contenido del fichero publicacion.ttl:
+```
+PREFIX ldp: <http://www.w3.org/ns/ldp#>
+PREFIX dc: <http://purl.org/dc/terms/>
+PREFIX p: <http://purl.org/saws/ontology#>
+<> a ldp:DirectContainer ;
+   dc:title "Contenedor Publicacion" ;
+   ldp:membershipResource </editorial/escritores> ;
+   ldp:hasMemberRelation p:hasWrite .
+```
+
+##### 3. Creación contenedor básico de escritores donde se guardan las relaciones que se especifican en el contenedor directo:
+```
+curl -s http://localhost:8080/editorial -XPOST -H"Slug: escritores" -H"Link: <http://www.w3.org/ns/ldp#BasicContainer>; rel=\"type\"" -H"Content-Type: text/turtle" --data-binary @recursos/escritores.ttl
+
+```
+Contenido del fichero escritores.ttl:
+```
+PREFIX ldp: <http://www.w3.org/ns/ldp#>
+PREFIX dc: <http://purl.org/dc/terms/>
+<> a ldp:BasicContainer ;
+   dc:title "Contenedor Escritores" .
+
+```
+
+##### 4. Creación recurso RDF del libro que se encuentra en publicación:
+```
+curl -s http://localhost:8080/editorial/publicacion1 -XPOST -H"Slug: libro1" -H"Link: <http://www.w3.org/ns/ldp#Resource>; rel=\"type\"" -H"Content-Type: text/turtle" --data-binary @recursos/libro.ttl
+
+```
+Contenido del fichero libro.ttl:
+```
+@prefix dc: <http://purl.org/dc/terms/> .
+@prefix bo: <http://example/books/#> .
+<> a bo:Book;
+    bo:primaryTopic <#info> ;
+    bo:title 'Señor de los anillos' .
+
+<#info> a bo:Book;
+    bo:description 'Narra las aventuras de unos Hobbits para destruir un anillo'.
+```
+
+##### 5. Resultados:
+Realizando una petición GET a /editorial/escritores/ se puede observar que se ha agregado una tripleta al recurso escritores. Como predicado tiene el atributo hasMemberRelation “hasWrite”, especificado en el contenedor directo, y como objeto el libro creado
