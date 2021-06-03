@@ -247,7 +247,7 @@ El objetivo es almacenar recursos del usuario Raul. En este caso el usuario tien
 curl -s http://localhost:8080 -XPOST -H"Slug: pablo" -H"Link: <http://www.w3.org/ns/ldp#BasicContainer>; rel=\"type\"" -H"Content-Type: text/turtle" --data-binary @recursos/pablo.ttl
 
 ```
-Contenido del fichero raul.ttl:
+Contenido del fichero pablo.ttl:
 ```
 PREFIX ldp: <http://www.w3.org/ns/ldp#>
 PREFIX dc: <http://purl.org/dc/terms/>
